@@ -1,130 +1,266 @@
-# Git Basics
-### How To Use Git Effictively In A Team
+# C++ Rampup Lecture 1
+### The Memory Model
 
 Created by [Barry Steyn](basteyn@microsoft.com)
 
 ~~
 
-# Git
- 1. Distributed
- 2. Light weight branches
+# Pointer
+## A pointer is really a 64 (or 32) bit integer that holds a memory address
+
+ * The memory address does not have to point to anything real.
+ * In fact, the memory address does not even have to exist.
+
+~
+# Pointer To Types
+## A pointer in C++ (not C) also has type information:
+
+It is declared by using *
+
+```
+int *p;
+char *c;
+SomeObject *someObject
+```
+
+~
+# Pointer Intialization
+## Always initialize pointers. Intialize to NULL if there is no intial value
+NULL is a *reserved constant* for the value 0 (zero)
+
+Setting something to null means it points to nothing
+
+```
+	int *p1 = NULL,
+		*p2;
+```
+####In the above code snippet, what would `p2` hold?
 
 ~
 
-#How To Think Of Git
-## Think of it as a graph:
+# Pointer Intialization With New
+## The new operator reserves memory on the **heap**
+```
+	int *p1 = NULL,
+		*p2 = new int;
+```
+####Okay, what is in p2 now?
 
- * There are graph nodes (git commit)
- * You can move to any node (git checkout)
- * You can change the history of the graph (git rebase)
+~
+# Stack Vs Heap
+##Stack is temporary memory used in specific contexts (i.e. functions)
+##Heap is permanent (for the duration of your program) memory used in any context
+Memory declared on the heap therefore needs to be manually deleted
 
 ~
 
-#Git: Exchange States
-##Your Goal: To get your *private* state exchanged for the shared state
+# Removing Things From The Stack
+## Use the delete operator
 
-Git can do this elegantly, but it is also very easy to make a mess.
+```
+	int *p = new int;
+	delete p;
+```
+
+~
+
+# Memory Leaks
+##If something is declared on the heap and you lose the reference to it, you get a memory leak
+
+```
+	void memoryLeak() {
+		int *p = new int; //
+	}
+
+	for (int i=0; i < 1000; i++)
+		memoryLeak();
+```
+Memory leaks are the most common memory mistake to make
+
+~
+
+# Dangling Pointers
+
+```
+	int *p = new int,
+		*a = &p;
+
+	delete p; // a is now pointing to something it shouldn't
+```
 
 ~~
 
-# Three Simple Rules
- 1. Work in feature branches
- 2. Rebase and push often
- 3. Fast forward merge into shared branches
+# C++'s Conciseness Makes It Confusing
+## \* is used to declare a pointer, its also used to dereference it
 
-<u>Tip</u>: Use source tree often to look at a tree view of your git repo
+```
+	int *p1 = new int;
+	*p1 = 3;
+
+	cout << p1 <<" "<< *p1;
+```
+
+~
+
+#Spot The Problem \# 1
+
+```
+	int *p;
+	cout << *p;
+```
+~
+
+#Spot The Problem \# 2
+
+```
+	int *p = new int; 
+	cout << p;
+```
 
 ~~
 
-# Feature Branches
-##Branching is core to git:
+# Reference
+## A reference is an entity that is an alias for another variable
+C++ uses & as the reference operator
 
- 1. Light weight
- 2. Quick to create
- 3. Quick to delete
-
-The master branch is special: It is considered the shared source of truth
-
-~
-
-# Feature Branches
-##A *short lived* branch created to accomplish a task
-###Think of a feature branch as your private space - GO WILD!
-
-As soon as these branches have been rebased/merged, they should be deleted
+```
+	int a = 100;
+	int &b = a;
+```
 
 ~
 
-# Feature Branches
-##They are not meant to be shared
+# C++'s Conciseness Makes It Confusing
+## The & operator can also be used to *get* a memory location
 
-<u>Clarification</u>: When you are git guru, go ahead and use other feature branches
-
-In the mean time: Never *EVER* merge a feature branch. This is a recipe for making a mess
+```
+	int a = 100;
+	int *p = &a; // 
+```
 
 ~
 
-# Feature Branches Vs Shared Branch
-## Shared branches contain state that is shared (and agreed upon) by everyone
+#Spot The Problem \# 3
 
-We have just one shared branch: <u>master</u>
+```
+	int a = 100;
+	int *p = a;
+```
 
 ~~
 
-# Rebase And Push Often
-##First thing after creating a branch locally: <u>push it to the remote</u>
+# Pass By Reference Vs Pass By Value
 
-Don't forget to set up your tracking (done automatically on visual source safe)
-
-~
-
-# Rebase And Push Often
-## Rebase the shared branch (master branch) onto the feature branch
+ * Modern languages pass complex types *by reference*
+ * C++ bucks this trend and everything is passed by value.
 
 ~
 
-# Aside: Rebase Vs Merge
-<div style="text-align: left;">
-###<u>Merge</u>: takes all changes in one branch, and brings them into another branch in one commit
-###<u>Rebase</u>: move the point where the current branch starts to a new starting point
-</div>
-But a picture is worth a thousand words...
+# Pass By Reference
+## Instead of a complex type being copied, a reference to it is passed
+
+ * Its efficient
+ * Changes persist <- Watch out for side-effects
+<br><br>
+###This is what you want most of the time
+
+~
+# Example - pass by value
+
+```
+class Test {
+	int longArray[1000000]; //who cares about initialization :)
+}
+
+----
+
+void func1(Test t) {
+	//Do nothing
+}
+
+Test testVar
+func1(tetsVar);
+
+```
 
 ~
 
-# Rebasing
-## Rebase is done for two reasons:
+# Example - pass by reference
+## Pointers And References Allow Pass By Reference
 
- 1. To neaten the history
- 2. To perform fast forward commits
+```
+class Test {
+	int longArray[1000000]; //who cares about initialization :)
+}
 
-<br>
-There is a subtle difference between the two items above: A fast-forward commit guarantees no conflicts, thus rebasing implies conflicts have already been sorted.
+----
+
+void func1(Test &t) {
+	//Do nothing
+}
+
+Test testVar
+func1(tetsVar);
+
+```
 
 ~~
 
-#Fast-Forward Merge
-## Once work is ready to be "shared", it is merged into the shared branch
-This merge is a fast-forward merge
+# Const
+##The const reserved word makes a variable as a constant:
+
+```
+const int a = 100; //a cannot change
+```
 
 ~
 
-#Fast-Forward Merge
-##It is a merge, and so pull-requests are valid
+# C++'s Conciseness Makes It Confusing
 
-Therefore, code reviews can be done
+```
+void test(int * p);
+void test(const int *p);
+void test(int * const p);
+void test(const int * const p);
+
+```
+
+Much easier for references:
+```
+void test(const int &r);
+
+```
+
+~~
+#RAII Pattern
+##RAII = Resource Acquisition Is Initilization
+This is just fancy talk for meaning for the following:
+  1. Make pointers class variables
+  2. Intialize them on the heap in the constructor
+  3. Remove them in the destructor
 
 ~
+# RAII Example
 
-#Aside: Pull Requests
-##A better description is a merge request
-The reason why it is called pull request is due to GitHub where whole projects are merged
+```
+class Test {
+	int *p;
 
-~
+	public:
+		Test() {
+			p = new int;
+		}
 
-#Aside: Pull Requests
-##A pull request is a step performed before merging
-Code can be checked (reviewed), and thumbs must be given. Automated tests should be run at this stage.
+		~Test() {
+			delete p;
+		}
+}
+```
+
+~~
+
+#Smart Pointers
+
 
 ~~
 
