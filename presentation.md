@@ -1,50 +1,45 @@
-# C++ Rampup Lecture 1
-### The Memory Model
+# Redux.js
 
 Created by [Barry Steyn](basteyn@microsoft.com)
 
 ~~
 
-# Pointer
-## A pointer is really a 64 (or 32) bit integer that holds a memory address
+# What Is Redux?
+## A Utility For Handling State Change
 
- * The memory address does not have to point to anything real.
- * In fact, the memory address does not even have to exist.
-
-~
-# Pointer To Types
-## A pointer in C++ (not C) also has type information:
-
-It is declared by using *
-
-```
-int *p;
-char *c;
-SomeObject *someObject
-```
+ * Simple to get started
+ * Difficult to use effectively
 
 ~
-# Pointer Intialization
-## Always initialize pointers. Intialize to NULL if there is no intial value
-NULL is a *reserved constant* for the value 0 (zero)
+# Why Redux Is Necessary
 
-Setting something to null means it points to nothing
+ * Handling state change is difficult because of **side-effects**
+ * State: *Server responses, cached data, locally created data* etc
 
-```
-	int *p1 = NULL,
-		*p2;
-```
-####In the above code snippet, what would `p2` hold?
+~
+# What About MVC
+
+There is no "centralized" control:
+
+  >  A model can update another model, then a view can update a model, which updates another model, and this, in turn, might cause another view to update. At some point, you no longer understand what happens in your app as **you have lost control over the when, why, and how of its state**
+
+~
+<div videoID="PLb0IAmt7-GS188xDYE-u1ShQmFFGbrk0v" startTime="755" endTime="855" id="youtube-player"></div>
+
+~~
+
+# Flux
+## Facebook's Solution
+
+~~
+
+# Flux + Reducer = Redux
 
 ~
 
-# Pointer Intialization With New
-## The new operator reserves memory on the **heap**
-```
-	int *p1 = NULL,
-		*p2 = new int;
-```
-####Okay, what is in p2 now?
+# Basic Concepts
+
+## Single Store
 
 ~
 # Stack Vs Heap
@@ -113,7 +108,7 @@ Memory leaks are the most common memory mistake to make
 #Spot The Problem \# 2
 
 ```
-	int *p = new int; 
+	int *p = new int;
 	cout << p;
 ```
 
@@ -135,7 +130,7 @@ C++ uses & as the reference operator
 
 ```
 	int a = 100;
-	int *p = &a; // 
+	int *p = &a; //
 ```
 
 ~
